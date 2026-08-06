@@ -106,5 +106,14 @@ project/
 
 > Esta decisão deve ser mantida consistente em todo o texto do TCC (Metodologia, Resultados, Conclusão) para evitar divergência entre o que o modelo realmente faz e o que é descrito no documento.
 
+## 13. Observação sobre a fonte do dataset (Kaggle)
+
+Os arquivos `UNSW_NB15_training-set.csv` e `UNSW_NB15_testing-set.csv` foram obtidos via Kaggle. Constatou-se que, nessa distribuição, os nomes dos arquivos estavam **invertidos** em relação à convenção oficial da UNSW Sydney:
+
+- Arquivo nomeado "training-set" continha 82.332 linhas (tamanho oficial do conjunto de teste);
+- Arquivo nomeado "testing-set" continha 175.341 linhas (tamanho oficial do conjunto de treino).
+
+Essa é uma inconsistência conhecida em algumas distribuições de terceiros do dataset. Os arquivos foram renomeados localmente para refletir a convenção acadêmica padrão (conjunto maior para treino, conjunto menor para teste), preservando o conteúdo original de cada partição. Essa correção deve ser mencionada na seção de Materiais e Métodos do TCC, como evidência de verificação e validação da fonte de dados.
+
 ---
 *Documento vivo — pode ser revisado conforme o projeto evolui, mas mudanças de escopo devem ser registradas aqui com justificativa.*
