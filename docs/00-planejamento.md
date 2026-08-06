@@ -115,5 +115,45 @@ Os arquivos `UNSW_NB15_training-set.csv` e `UNSW_NB15_testing-set.csv` foram obt
 
 Essa é uma inconsistência conhecida em algumas distribuições de terceiros do dataset. Os arquivos foram renomeados localmente para refletir a convenção acadêmica padrão (conjunto maior para treino, conjunto menor para teste), preservando o conteúdo original de cada partição. Essa correção deve ser mencionada na seção de Materiais e Métodos do TCC, como evidência de verificação e validação da fonte de dados.
 
+## 14. Limitação computacional do SVM
+
+Durante a comparação de modelos (Etapa 9), constatou-se que o treinamento do SVM
+com kernel RBF no dataset completo (175.341 registros de treino, 5-fold CV) é
+computacionalmente inviável dentro de um tempo razoável, devido à complexidade
+O(n²) a O(n³) do algoritmo — uma limitação amplamente documentada na literatura.
+
+Decisão: o SVM foi treinado e avaliado em uma amostra estratificada de 15.000
+registros (preservando a proporção original de classes), enquanto os demais
+modelos utilizaram o dataset completo. A avaliação final no conjunto de teste
+foi realizada sobre o conjunto de teste completo (82.332 registros) para todos
+os modelos, garantindo comparabilidade nos resultados finais.
+
+## 15. Resultado da comparação de modelos
+
+Nove modelos foram treinados e avaliados: Logistic Regression, Random Forest,
+Extra Trees, Gradient Boosting, XGBoost, LightGBM, CatBoost, MLP e SVM.
+
+O modelo **LightGBM** foi selecionado automaticamente como melhor modelo, com
+base no F1-score no conjunto de teste (métrica de seleção definida a priori):
+
+| Modelo | CV F1-score | Test F1-score | Test ROC-AUC |
+|---|---|---|---|
+| LightGBM | 0.9605 | 0.9282 | 0.9878 |
+| CatBoost | 0.9654 | 0.9220 | 0.9864 |
+| XGBoost | 0.9684 | 0.8986 | 0.9862 |
+| Random Forest (baseline) | 0.9689 | 0.8930 | 0.9816 |
+| Extra Trees | 0.9683 | 0.8889 | 0.9742 |
+| Gradient Boosting | 0.9601 | 0.8848 | 0.9831 |
+| MLP | 0.9524 | 0.8848 | 0.9778 |
+| Logistic Regression | 0.9107 | 0.8102 | 0.8586 |
+| SVM (amostra de 15k) | 0.8094 | 0.7084 | 0.8304 |
+
+Observa-se, para praticamente todos os modelos, uma diferença entre o F1-score
+médio de validação cruzada (calculado inteiramente sobre o conjunto de treino)
+e o F1-score no conjunto de teste holdout oficial. Essa diferença é atribuída
+à distribuição estatística distinta entre as partições de treino e teste do
+UNSW-NB15, uma característica documentada na literatura sobre este dataset, e
+não a um sintoma de overfitting introduzido pelo pipeline de modelagem.
+
 ---
 *Documento vivo — pode ser revisado conforme o projeto evolui, mas mudanças de escopo devem ser registradas aqui com justificativa.*
