@@ -80,14 +80,14 @@ def find_highly_correlated_features(df: pd.DataFrame, threshold: float = 0.9) ->
         (col, row, upper.loc[row, col])
         for col in upper.columns
         for row in upper.index
-        if pd.notnull(upper.loc[row, col]) and upper.loc[row, col] >= threshold
+        if pd.notnull(upper.loc[row, col]) and upper.loc[row, col] >= threshold #type: ignore
     ]
 
     print(f"\nPares de features com correlação >= {threshold}:")
     if not high_corr_pairs:
         print("Nenhum par encontrado acima do limiar.")
     else:
-        for col, row, value in sorted(high_corr_pairs, key=lambda x: -x[2]):
+        for col, row, value in sorted(high_corr_pairs, key=lambda x: -x[2]): # type: ignore
             print(f"  {row} <-> {col}: {value:.3f}")
 
 

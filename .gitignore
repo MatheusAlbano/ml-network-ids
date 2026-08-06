@@ -26,3 +26,6 @@ logs/*
 
 # Node (frontend, mais pra frente)
 frontend/node_modules/
+
+# Logs internos gerados pelo CatBoost durante o treinamento
+catboost_info/
