@@ -69,6 +69,11 @@ class RiskLevel(str, Enum):
     ALTO = "Alto"
     CRITICO = "Crítico"
 
+class FeatureContribution(BaseModel):
+    feature: str
+    value: str | float
+    contribution: float
+    direction: str
 
 class PredictionResponse(BaseModel):
     predicted_class: str = Field(..., description="'Normal' ou 'Ataque'")
@@ -78,3 +83,5 @@ class PredictionResponse(BaseModel):
     inference_time_ms: float
     model_used: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    top_features: list[FeatureContribution] #type: ignore
+    explanation_text: str

@@ -27,6 +27,8 @@ def test_predict_response_has_expected_fields(client, valid_payload):
         "inference_time_ms",
         "model_used",
         "timestamp",
+        "top_features",
+        "explanation_text",
     }
     assert expected_fields.issubset(body.keys())
 

@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.core.config import MODEL_PATH, METADATA_PATH
 from app.schemas.prediction import NetworkConnectionInput, PredictionResponse, RiskLevel
+from app.ml.explainability import explain_prediction
 import json
 
 router = APIRouter()
@@ -77,6 +78,8 @@ def predict(connection: NetworkConnectionInput) -> PredictionResponse: #type:ign
     probability_attack = float(probabilities[1])
     predicted_class = "Ataque" if probability_attack >= 0.5 else "Normal"
 
+    explanation = explain_prediction(input_df)
+
     return PredictionResponse(
         predicted_class=predicted_class,
         probability_normal=probability_normal,
@@ -84,4 +87,6 @@ def predict(connection: NetworkConnectionInput) -> PredictionResponse: #type:ign
         risk_level=classify_risk(probability_attack),
         inference_time_ms=round(inference_time_ms, 3),
         model_used=get_model_name(),
+        top_features=explanation["top_features"],
+        explanation_text=explanation["explanation_text"],
     )
