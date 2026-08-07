@@ -149,7 +149,6 @@ def evaluate_on_test(pipeline: Pipeline, X_test, y_test) -> dict:
 
 def run_comparison(X_train, y_train, X_test, y_test) -> dict:
     """Treina e avalia todos os modelos candidatos, retornando os resultados."""
-    preprocessor = build_preprocessing_pipeline(X_train)
     all_results = {}
 
     for name, model in CANDIDATE_MODELS.items():
@@ -157,8 +156,11 @@ def run_comparison(X_train, y_train, X_test, y_test) -> dict:
         print(f"Treinando e avaliando: {name}")
         print(f"{'-' * 60}")
 
+        # Preprocessador NOVO para cada modelo, evitando que o estado
+        # de treinamento de um modelo "vaze" para outro (bug de objeto compartilhado)
+        preprocessor = build_preprocessing_pipeline(X_train)
         pipeline = build_pipeline_for_model(preprocessor, model)
-
+        
         # Modelos computacionalmente caros usam amostra estratificada
         if name in MODELS_REQUIRING_SAMPLING:
             print(f"  (usando amostra estratificada de {SVM_SAMPLE_SIZE} registros "
