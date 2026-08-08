@@ -29,3 +29,6 @@ frontend/node_modules/
 
 # Logs internos gerados pelo CatBoost durante o treinamento
 catboost_info/
+
+# Banco de dados local do histórico de análises
+artifacts/history.db

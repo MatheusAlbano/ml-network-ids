@@ -15,6 +15,13 @@ from app.schemas.prediction import NetworkConnectionInput, PredictionResponse, R
 from app.ml.explainability import explain_prediction
 import json
 
+from sqlalchemy.orm import Session #type: ignore
+from fastapi import Depends
+
+from app.core.database import get_db
+from app.core.logging_config import logger #type: ignore
+from app.models.analysis import AnalysisRecord
+
 router = APIRouter()
 
 
@@ -52,18 +59,14 @@ def classify_risk(probability_attack: float) -> RiskLevel:
 
 
 @router.post("/predict", response_model=PredictionResponse, tags=["Predição"])
-def predict(connection: NetworkConnectionInput) -> PredictionResponse: #type:ignore
-    """
-    Recebe as características de uma conexão de rede e retorna a
-    classificação (Normal/Ataque), probabilidades, nível de risco
-    e tempo de inferência.
-    """
+def predict(connection: NetworkConnectionInput, db: Session = Depends(get_db)) -> PredictionResponse: #type: ignore
+    """..."""  # docstring existente permanece
     try:
         model = get_model()
     except FileNotFoundError as e:
+        logger.error(f"Falha ao carregar modelo: {e}")
         raise HTTPException(status_code=503, detail=str(e))
 
-    # Converte os valores do Enum (categóricos) para string simples antes do DataFrame
     input_dict = {
         key: (value.value if hasattr(value, "value") else value)
         for key, value in connection.model_dump().items()
@@ -79,12 +82,36 @@ def predict(connection: NetworkConnectionInput) -> PredictionResponse: #type:ign
     predicted_class = "Ataque" if probability_attack >= 0.5 else "Normal"
 
     explanation = explain_prediction(input_df)
+    risk_level = classify_risk(probability_attack)
+
+    # Persiste a análise no histórico
+    record = AnalysisRecord(
+        predicted_class=predicted_class,
+        probability_attack=probability_attack,
+        risk_level=risk_level.value,
+        inference_time_ms=round(inference_time_ms, 3),
+        model_used=get_model_name(),
+        input_summary={
+            "proto": input_dict.get("proto"),
+            "service": input_dict.get("service"),
+            "state": input_dict.get("state"),
+            "sttl": input_dict.get("sttl"),
+        },
+        explanation_text=explanation["explanation_text"],
+    )
+    db.add(record)
+    db.commit()
+
+    logger.info(
+        f"Predição realizada: classe={predicted_class}, risco={risk_level.value}, "
+        f"tempo={inference_time_ms:.2f}ms"
+    )
 
     return PredictionResponse(
         predicted_class=predicted_class,
         probability_normal=probability_normal,
         probability_attack=probability_attack,
-        risk_level=classify_risk(probability_attack),
+        risk_level=risk_level,
         inference_time_ms=round(inference_time_ms, 3),
         model_used=get_model_name(),
         top_features=explanation["top_features"],
