@@ -10,8 +10,12 @@ import json
 
 import pandas as pd
 
-from data_loader import load_raw_data
-from feature_engineering import prepare_dataset, TOP_PROTO_CATEGORIES, CATEGORICAL_COLUMNS
+try:
+    from app.ml.data_loader import load_raw_data
+    from app.ml.feature_engineering import prepare_dataset, TOP_PROTO_CATEGORIES, CATEGORICAL_COLUMNS
+except ImportError:
+    from data_loader import load_raw_data
+    from feature_engineering import prepare_dataset, TOP_PROTO_CATEGORIES, CATEGORICAL_COLUMNS
 
 ARTIFACTS_DIR = Path(__file__).resolve().parents[3] / "artifacts"
 SCHEMA_PATH = ARTIFACTS_DIR / "input_schema.json"

@@ -10,7 +10,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, RobustScaler
 
-from data_loader import load_raw_data
+try:
+    from app.ml.data_loader import load_raw_data
+except ImportError:
+    from data_loader import load_raw_data
 
 # Colunas que NUNCA devem entrar como feature (vazamento de dados ou irrelevantes)
 LEAKAGE_COLUMNS = ["attack_cat", "id"]

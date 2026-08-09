@@ -33,9 +33,13 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
 
-from data_loader import load_raw_data
-from feature_engineering import prepare_dataset, build_preprocessing_pipeline
-
+try:
+    from app.ml.data_loader import load_raw_data
+    from app.ml.feature_engineering import prepare_dataset, build_preprocessing_pipeline
+except ImportError:
+    from data_loader import load_raw_data
+    from feature_engineering import prepare_dataset, build_preprocessing_pipeline
+    
 MODELS_DIR = Path(__file__).resolve().parents[3] / "models"
 ARTIFACTS_DIR = Path(__file__).resolve().parents[3] / "artifacts"
 MODELS_DIR.mkdir(parents=True, exist_ok=True)

@@ -19,9 +19,13 @@ from sklearn.metrics import (
     classification_report,
 )
 
-from data_loader import load_raw_data
-from feature_engineering import prepare_dataset, build_preprocessing_pipeline
-
+try:
+    from app.ml.data_loader import load_raw_data
+    from app.ml.feature_engineering import prepare_dataset, build_preprocessing_pipeline
+except ImportError:
+    from data_loader import load_raw_data
+    from feature_engineering import prepare_dataset, build_preprocessing_pipeline
+    
 # Onde o modelo treinado será salvo
 MODELS_DIR = Path(__file__).resolve().parents[3] / "models"
 MODELS_DIR.mkdir(parents=True, exist_ok=True)

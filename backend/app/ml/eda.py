@@ -7,7 +7,10 @@ from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from data_loader import load_raw_data
+try:
+    from app.ml.data_loader import load_raw_data
+except ImportError:
+    from data_loader import load_raw_data
 
 # Pasta onde os gráficos gerados serão salvos
 ARTIFACTS_DIR = Path(__file__).resolve().parents[3] / "artifacts" / "eda"
