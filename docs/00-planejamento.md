@@ -186,5 +186,57 @@ A API foi construída com FastAPI, seguindo os seguintes princípios:
   - `POST /predict` — recebe as características de uma conexão de rede e retorna classe prevista, probabilidades, nível de risco (Baixo/Médio/Alto/Crítico) e tempo de inferência;
 - **Documentação automática:** disponível via Swagger UI em `/docs`, gerada nativamente pelo FastAPI a partir dos schemas Pydantic.
 
+## 18. Endpoints de Dashboard e Estatísticas (Etapa 15)
+
+Foram adicionados endpoints sob o prefixo `/dashboard`, que combinam métricas operacionais (extraídas do histórico salvo em SQLite) com métricas estáticas do modelo (calculadas no treino):
+
+- `GET /dashboard/summary` — total de análises, taxa de ataques, última análise, métricas do modelo em produção;
+- `GET /dashboard/confusion-matrix` — matriz de confusão calculada sobre o conjunto de teste oficial;
+- `GET /dashboard/roc-curve` e `GET /dashboard/precision-recall-curve` — pontos das curvas, reduzidos a no máximo 100 pontos cada, para consumo direto por bibliotecas de gráfico no frontend;
+- `GET /dashboard/feature-importance` — importância média (SHAP) das features, calculada sobre uma amostra de 2.000 registros do conjunto de teste.
+
+**Correções técnicas realizadas nesta etapa:**
+- O `roc_curve` do Scikit-Learn retorna um primeiro threshold igual a `np.inf`, que não é serializável em JSON (`ValueError: Out of range float values are not JSON compliant`). Corrigido substituindo esse valor por `1.0` antes da serialização, preservando o significado do ponto.
+- Diversos módulos em `app/ml/` (`feature_engineering.py`, `compare_models.py`, `persist_artifacts.py`, `eda.py`, `train_baseline.py`) usavam imports "soltos" (ex: `from data_loader import ...`), válidos apenas quando executados como script standalone. Foi necessário adicionar blocos `try/except ImportError` para que os mesmos arquivos funcionem tanto como scripts diretos (uso manual, re-treino) quanto importados através do pacote `app` (uso pela API).
+
+## 19. Upload de CSV em Lote (Etapa 16)
+
+Endpoint `POST /predict/batch` implementado para processar múltiplas conexões de rede de uma só vez, atendendo ao requisito de upload em lote do escopo original.
+
+**Decisões de design:**
+- Validação em duas fases: todas as linhas são validadas antes do processamento; linhas inválidas são reportadas individualmente em `errors`, sem interromper o processamento das linhas válidas restantes;
+- O pipeline é chamado uma única vez sobre todas as linhas válidas simultaneamente (`model.predict_proba(valid_df)`), não em loop linha a linha, por eficiência;
+- Cada linha processada com sucesso é também persistida no histórico (`AnalysisRecord`), marcada com `"source": "batch_upload"` para diferenciação futura no dashboard;
+- Explicabilidade (SHAP) não é calculada por linha em lote, por custo computacional — documentado como limitação consciente e possível trabalho futuro (processamento assíncrono).
+
+**Robustez contra CSVs exportados/editados no Microsoft Excel** — três problemas de interoperabilidade identificados e corrigidos durante testes manuais:
+1. **Delimitador não-padrão:** o Excel, com localidade PT-BR, frequentemente salva CSVs usando `;` como separador de campo em vez de `,`. Corrigido com `pd.read_csv(..., sep=None, engine="python")`, que detecta o delimitador automaticamente.
+2. **BOM (Byte Order Mark):** o Excel insere um caractere invisível no início do arquivo ao salvar como "CSV UTF-8", corrompendo o nome da primeira coluna do cabeçalho. Corrigido com `encoding="utf-8-sig"`.
+3. **Vírgula como separador decimal:** valores numéricos editados no Excel com localidade PT-BR usam vírgula ao invés de ponto (ex: `0,000005` em vez de `0.000005`). Corrigido com uma conversão tolerante (`str.replace(",", ".")`) aplicada tanto na validação quanto antes da inferência.
+
+Esses três problemas, embora específicos do Excel, representam um caso geral importante: **um sistema que aceita upload de arquivos de usuários reais precisa ser robusto a variações de formatação regionais**, não apenas ao formato "ideal" gerado pelo próprio pipeline interno. Vale citar essa robustez como um ponto de qualidade de engenharia no capítulo de Resultados do TCC.
+
+## 20. Setup do Frontend (Etapa 17)
+
+**Stack definida:** React + TypeScript, com Vite como build tool e Tailwind CSS para estilização — conforme planejado na seção 8, com a decisão final por Vite (não Next.js), por ser mais simples para uma SPA consumindo uma API já existente, sem necessidade de SSR.
+
+**Ajustes de ambiente necessários:**
+- **Atualização do Node.js**: a instalação original (v20.9.0) era incompatível com a versão atual das ferramentas de scaffolding do Vite (`create-vite`), que exige Node `^20.19.0` ou `>=22.12.0`. O erro observado (`SyntaxError: The requested module 'node:util' does not provide an export named 'styleText'`) foi resolvido atualizando para Node v24.19.0 (LTS).
+- **Tailwind CSS v4**: a versão atual do Tailwind mudou significativamente sua forma de configuração em relação à v3 (amplamente documentada em tutoriais desatualizados). O comando tradicional `npx tailwindcss init -p` e o arquivo `tailwind.config.js` foram substituídos por: instalação do pacote `@tailwindcss/vite` como plugin do Vite, e customização de tema feita diretamente no CSS via diretiva `@theme`, dentro de `src/index.css`.
+
+**Estrutura de pastas do frontend:**
+```
+frontend/src/
+├── components/   # componentes reutilizáveis
+├── pages/        # telas completas
+├── services/     # comunicação com a API (fetch)
+├── types/        # tipos TypeScript espelhando os schemas Pydantic do backend
+├── hooks/        # hooks customizados
+├── App.tsx
+└── main.tsx
+```
+
+**Comunicação com a API:** configurada via variável de ambiente `VITE_API_BASE_URL` (arquivo `.env`), consumida por um cliente HTTP simples (`services/api.ts`) com tratamento de erro tipado (`ApiError`). A primeira tela funcional (`App.tsx`) consome `GET /status` e confirma visualmente a comunicação bem-sucedida entre frontend e backend antes do início da construção das telas definitivas.
+
 ---
 *Documento vivo — pode ser revisado conforme o projeto evolui, mas mudanças de escopo devem ser registradas aqui com justificativa.*
