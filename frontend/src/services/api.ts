@@ -30,3 +30,24 @@ export async function apiPost<T>(path: string, body: unknown): Promise<T> {
   }
   return response.json();
 }
+
+export async function apiPostFile<T>(path: string, file: File): Promise<T> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    body: formData,
+    // Não definir Content-Type manualmente — o navegador define
+    // automaticamente com o boundary correto para multipart/form-data.
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.json().catch(() => null);
+    throw new ApiError(
+      errorBody?.detail ? JSON.stringify(errorBody.detail) : `Erro ao enviar arquivo para ${path}`,
+      response.status
+    );
+  }
+  return response.json();
+}
