@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import APP_TITLE, APP_DESCRIPTION, APP_VERSION
 from app.core.database import engine, Base
 from app.models import analysis  # garante que o modelo seja registrado antes de criar as tabelas
-from app.api.routes import predict, status, history, dashboard, batch
+from app.api.routes import predict, status, history, dashboard, batch, schema
 
 # Cria as tabelas do banco (se ainda não existirem) na inicialização da aplicação
 Base.metadata.create_all(bind=engine)
@@ -34,6 +34,7 @@ app.include_router(status.router)
 app.include_router(history.router)
 app.include_router(dashboard.router)
 app.include_router(batch.router)
+app.include_router(schema.router)
 
 
 @app.get("/", tags=["Sistema"])
