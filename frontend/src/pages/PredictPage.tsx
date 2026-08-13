@@ -7,19 +7,21 @@ import { PredictionResultCard } from "../components/PredictionResultCard";
 import { useInputSchema } from "../hooks/useInputSchema";
 import { predictConnection } from "../services/predictService";
 import type { PredictionResult } from "../types/prediction";
+import { useSettings } from "../hooks/useSettings";
 
 export function PredictPage() {
   const { schema, loading, error } = useInputSchema();
   const [result, setResult] = useState<PredictionResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const { threshold } = useSettings();
 
   async function handleSubmit(payload: Record<string, string | number>) {
     setSubmitting(true);
     setSubmitError(null);
     setResult(null);
     try {
-      const prediction = await predictConnection(payload);
+      const prediction = await predictConnection(payload, threshold);
       setResult(prediction);
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : "Erro desconhecido");

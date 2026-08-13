@@ -59,7 +59,11 @@ def classify_risk(probability_attack: float) -> RiskLevel:
 
 
 @router.post("/predict", response_model=PredictionResponse, tags=["Predição"])
-def predict(connection: NetworkConnectionInput, db: Session = Depends(get_db)) -> PredictionResponse: #type: ignore
+def predict(
+    connection: NetworkConnectionInput, #type: ignore
+    db: Session = Depends(get_db),
+    threshold: float = 0.5,
+) -> PredictionResponse:
     """..."""  # docstring existente permanece
     try:
         model = get_model()
@@ -79,7 +83,7 @@ def predict(connection: NetworkConnectionInput, db: Session = Depends(get_db)) -
 
     probability_normal = float(probabilities[0])
     probability_attack = float(probabilities[1])
-    predicted_class = "Ataque" if probability_attack >= 0.5 else "Normal"
+    predicted_class = "Ataque" if probability_attack >= threshold else "Normal"
 
     explanation = explain_prediction(input_df)
     risk_level = classify_risk(probability_attack)
