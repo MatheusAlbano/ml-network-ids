@@ -46,6 +46,28 @@ def plot_class_distribution(df: pd.DataFrame) -> None:
     plt.close(fig)
     print(f"\nGráfico salvo em: {ARTIFACTS_DIR / 'class_distribution.png'}")
 
+def plot_attack_category_distribution(df: pd.DataFrame) -> None:
+    """Gera gráfico de barras da distribuição das categorias de ataque (attack_cat)."""
+    counts = df["attack_cat"].value_counts()
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    barras = ax.bar(counts.index, counts.values, color="#3b6ea5", edgecolor="black", linewidth=0.5) #type: ignore
+
+    ax.set_title("Distribuição de classes no dataset UNSW-NB15 (conjunto de treino)", fontsize=13, fontweight="bold")
+    ax.set_ylabel("Número de registros")
+    ax.set_xlabel("Classe / Categoria de ataque")
+    plt.xticks(rotation=35, ha="right", fontsize=9)
+    ax.grid(axis="y", linestyle="--", alpha=0.4)
+    ax.set_axisbelow(True)
+
+    for barra, valor in zip(barras, counts.values):
+        ax.text(barra.get_x() + barra.get_width() / 2, barra.get_height() + 800,
+                 f"{valor:,}".replace(",", "."), ha="center", va="bottom", fontsize=8)
+
+    fig.tight_layout()
+    fig.savefig(ARTIFACTS_DIR / "attack_category_distribution.png", dpi=150)
+    plt.close(fig)
+    print(f"Gráfico salvo em: {ARTIFACTS_DIR / 'attack_category_distribution.png'}")
 
 def plot_correlation_heatmap(df: pd.DataFrame) -> None:
     """Gera heatmap de correlação entre as features numéricas."""
@@ -119,6 +141,7 @@ if __name__ == "__main__":
 
     analyze_categorical_columns(df_train)
     plot_class_distribution(df_train)
+    plot_attack_category_distribution(df_train)
     plot_correlation_heatmap(df_train)
     find_highly_correlated_features(df_train, threshold=0.9)
     detect_outliers_iqr(df_train)
