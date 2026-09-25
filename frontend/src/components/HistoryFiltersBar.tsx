@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Filter, Download } from "lucide-react";
-import { getHistoryExportUrl } from "../services/historyService";
+import { exportHistory } from "../services/historyService";
 
 interface HistoryFiltersBarProps {
   onApply: (predictedClass: string, riskLevel: string) => void;
@@ -48,12 +48,12 @@ export function HistoryFiltersBar({ onApply }: HistoryFiltersBarProps) {
       </button>
 
       
-      <a
-      href={getHistoryExportUrl()}
-        className="flex items-center gap-2 bg-surface-hover hover:bg-border text-gray-200 text-sm font-medium px-4 py-2 rounded-lg transition-colors ml-auto"
-      >
-        <Download size={14} /> Exportar CSV
-      </a>
+      <button
+          onClick={exportHistory}
+          className="flex items-center gap-2 bg-surface-hover hover:bg-border text-gray-200 text-sm font-medium px-4 py-2 rounded-lg transition-colors ml-auto"
+        >
+          <Download size={14} /> Exportar CSV
+      </button>
     </div>
   );
 }

@@ -13,6 +13,30 @@ export function getHistory(filters: HistoryFilters): Promise<AnalysisHistoryResp
   return apiGet<AnalysisHistoryResponse>(`/history?${params.toString()}`);
 }
 
-export function getHistoryExportUrl(): string {
-  return `${API_BASE_URL}/history/export`;
+export async function exportHistory(): Promise<void> {
+  const token = localStorage.getItem("access_token");
+
+  const response = await fetch(`${API_BASE_URL}/history/export`, {
+    headers: token
+      ? {
+          Authorization: `Bearer ${token}`,
+        }
+      : undefined,
+  });
+
+  if (!response.ok) {
+    throw new Error("Não foi possível exportar o histórico.");
+  }
+
+  const blob = await response.blob();
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "historico_analises.csv";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  window.URL.revokeObjectURL(url);
 }

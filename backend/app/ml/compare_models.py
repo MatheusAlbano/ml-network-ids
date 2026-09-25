@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import StratifiedKFold, cross_validate
+from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import (
     RandomForestClassifier,
@@ -82,7 +82,7 @@ CANDIDATE_MODELS = {
         hidden_layer_sizes=(64, 32), max_iter=300, random_state=42
     ),
     "SVM": SVC(
-        kernel="rbf", class_weight="balanced", probability=True, random_state=42
+        kernel="rbf", class_weight="balanced", probability=False, random_state=42
     ),
 }
 
@@ -93,20 +93,20 @@ def build_pipeline_for_model(preprocessor, model) -> Pipeline:
 
 def stratified_sample(X: pd.DataFrame, y: pd.Series, sample_size: int):
     """
-    Retorna uma amostra estratificada de X/y (preserva a proporção de classes),
-    usada para modelos computacionalmente caros como o SVM.
+    Retorna uma amostra estratificada de X/y, preservando a proporção
+    das classes. Usada para modelos computacionalmente caros como o SVM.
     """
-    df_combined = X.copy()
-    df_combined["_target"] = y.values
+    if sample_size >= len(X):
+        return X.copy(), y.copy()
 
-    sampled = df_combined.groupby("_target", group_keys=False).apply(
-        lambda group: group.sample(
-            frac=sample_size / len(df_combined), random_state=42
-        )
+    X_sampled, _, y_sampled, _ = train_test_split(
+        X,
+        y,
+        train_size=sample_size,
+        stratify=y,
+        random_state=42,
     )
 
-    y_sampled = sampled["_target"]
-    X_sampled = sampled.drop(columns=["_target"])
     return X_sampled, y_sampled
 
 def run_cross_validation(pipeline: Pipeline, X_train, y_train, cv_folds: int = 5) -> dict:
@@ -140,14 +140,21 @@ def run_cross_validation(pipeline: Pipeline, X_train, y_train, cv_folds: int = 5
 def evaluate_on_test(pipeline: Pipeline, X_test, y_test) -> dict:
     """Avalia o pipeline já treinado no conjunto de teste (holdout)."""
     y_pred = pipeline.predict(X_test)
-    y_proba = pipeline.predict_proba(X_test)[:, 1]
+
+    # Alguns modelos, como o SVM configurado sem probability=True,
+    # não possuem predict_proba(). Nesse caso, usamos decision_function()
+    # para calcular o ROC-AUC.
+    if hasattr(pipeline, "predict_proba"):
+        y_score = pipeline.predict_proba(X_test)[:, 1]
+    else:
+        y_score = pipeline.decision_function(X_test)
 
     return {
         "test_accuracy": float(accuracy_score(y_test, y_pred)),
         "test_precision": float(precision_score(y_test, y_pred)),
         "test_recall": float(recall_score(y_test, y_pred)),
         "test_f1_score": float(f1_score(y_test, y_pred)),
-        "test_roc_auc": float(roc_auc_score(y_test, y_proba)),
+        "test_roc_auc": float(roc_auc_score(y_test, y_score)),
     }
 
 

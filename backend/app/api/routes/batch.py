@@ -12,6 +12,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.security import get_current_user
 from app.core.logging_config import logger
 from app.models.analysis import AnalysisRecord
 from app.api.routes.predict import get_model, get_model_name, classify_risk
@@ -70,6 +71,7 @@ def _validate_row(row: pd.Series) -> str | None:
 async def predict_batch(
     file: UploadFile = File(..., description="Arquivo CSV com conexões de rede"),
     db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
 ) -> BatchPredictionResponse:
     """
     Processa um arquivo CSV contendo múltiplas conexões de rede,

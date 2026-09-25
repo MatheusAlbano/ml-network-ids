@@ -4,6 +4,7 @@ import csv
 import io
 
 from fastapi import APIRouter, Depends, Query
+from app.core.security import get_current_user
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session #type: ignore
 from sqlalchemy import desc #type: ignore
@@ -18,13 +19,16 @@ router = APIRouter()
 @router.get("/history", response_model=AnalysisHistoryResponse, tags=["Histórico"])
 def get_history(
     db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
     predicted_class: str | None = Query(None, description="Filtrar por 'Normal' ou 'Ataque'"),
     risk_level: str | None = Query(None, description="Filtrar por nível de risco"),
     limit: int = Query(50, ge=1, le=500),
     offset: int = Query(0, ge=0),
 ) -> AnalysisHistoryResponse:
     """Retorna o histórico de análises, mais recentes primeiro, com filtros opcionais."""
-    query = db.query(AnalysisRecord)
+    query = db.query(AnalysisRecord).filter(
+    AnalysisRecord.user_id == current_user.id
+)
 
     if predicted_class:
         query = query.filter(AnalysisRecord.predicted_class == predicted_class)
@@ -41,9 +45,17 @@ def get_history(
 
 
 @router.get("/history/export", tags=["Histórico"])
-def export_history_csv(db: Session = Depends(get_db)) -> StreamingResponse:
+def export_history_csv(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+) -> StreamingResponse:
     """Exporta todo o histórico de análises em formato CSV."""
-    records = db.query(AnalysisRecord).order_by(desc(AnalysisRecord.timestamp)).all()
+    records = (
+    db.query(AnalysisRecord)
+    .filter(AnalysisRecord.user_id == current_user.id)
+    .order_by(desc(AnalysisRecord.timestamp))
+    .all()
+)
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)

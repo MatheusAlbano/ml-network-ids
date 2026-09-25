@@ -17,6 +17,7 @@ import json
 
 from sqlalchemy.orm import Session #type: ignore
 from fastapi import Depends
+from app.core.security import get_current_user
 
 from app.core.database import get_db
 from app.core.logging_config import logger #type: ignore
@@ -63,6 +64,7 @@ def predict(
     connection: NetworkConnectionInput, #type: ignore
     db: Session = Depends(get_db),
     threshold: float = 0.5,
+    current_user=Depends(get_current_user),
 ) -> PredictionResponse:
     """..."""  # docstring existente permanece
     try:
@@ -90,6 +92,7 @@ def predict(
 
     # Persiste a análise no histórico
     record = AnalysisRecord(
+        user_id=current_user.id,
         predicted_class=predicted_class,
         probability_attack=probability_attack,
         risk_level=risk_level.value,
