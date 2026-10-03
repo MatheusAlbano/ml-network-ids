@@ -139,6 +139,7 @@ async def predict_batch(
 
             records_to_save.append(
                 AnalysisRecord(
+                    user_id=current_user.id,
                     predicted_class=predicted_class,
                     probability_attack=probability_attack,
                     risk_level=risk_level.value,
