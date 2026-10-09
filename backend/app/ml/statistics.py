@@ -10,7 +10,7 @@ from functools import lru_cache
 import numpy as np
 from sklearn.metrics import confusion_matrix, roc_curve, precision_recall_curve
 
-from app.ml.data_loader import load_raw_data
+from app.ml.data_loader import load_test_data
 from app.ml.feature_engineering import prepare_dataset
 from app.api.routes.predict import get_model
 
@@ -22,7 +22,7 @@ def _get_test_predictions():
     y_test, y_pred e y_proba. Cacheado porque carregar o dataset e
     rodar a predição em ~82 mil linhas não é instantâneo.
     """
-    _, df_test = load_raw_data()
+    df_test = load_test_data()
     X_test, y_test = prepare_dataset(df_test)
 
     model = get_model()
@@ -91,7 +91,7 @@ def get_global_feature_importance(top_n: int = 10) -> list[dict]:
     """
     from app.ml.explainability import get_pipeline, get_explainer, _map_transformed_name_to_original
 
-    _, df_test = load_raw_data()
+    df_test = load_test_data()
     X_test, _ = prepare_dataset(df_test)
 
     # Amostra para manter o cálculo rápido (SHAP em milhares de linhas é custoso)

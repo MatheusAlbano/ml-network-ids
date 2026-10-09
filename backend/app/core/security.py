@@ -2,6 +2,7 @@
 Funções de segurança e autenticação da aplicação.
 """
 
+import os
 from datetime import datetime, timedelta, timezone
 
 import jwt
@@ -15,7 +16,9 @@ from app.core.database import get_db
 from app.models.user import User
 
 
-SECRET_KEY = "ml-network-ids-secret-key-change-in-production"
+# Em produção a chave vem da variável de ambiente SECRET_KEY (segredo do servidor);
+# o valor fixo abaixo só é usado no ambiente local de desenvolvimento.
+SECRET_KEY = os.getenv("SECRET_KEY", "ml-network-ids-secret-key-change-in-production")
 
 ALGORITHM = "HS256"
 

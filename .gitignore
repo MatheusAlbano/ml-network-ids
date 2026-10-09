@@ -6,6 +6,7 @@ __pycache__/
 # Dataset (arquivos grandes não devem ir pro Git)
 dataset/raw/*
 !dataset/raw/.gitkeep
+!dataset/raw/UNSW_NB15_testing-set.csv
 dataset/processed/*
 !dataset/processed/.gitkeep
 
@@ -14,6 +15,11 @@ models/*
 !models/.gitkeep
 artifacts/*
 !artifacts/.gitkeep
+
+# Exceções: arquivos que a hospedagem (Render) precisa receber pelo Git
+!models/best_model.joblib
+!artifacts/input_schema.json
+!artifacts/model_metadata.json
 
 # Logs
 logs/*
