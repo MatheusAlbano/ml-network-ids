@@ -1,0 +1,9 @@
+# Dependências usadas na imagem Docker de hospedagem.
+# Reaproveita o requirements.txt principal e acrescenta o que a
+# autenticação e o banco externo opcional (PostgreSQL) precisam.
+-r ../requirements.txt
+
+email-validator==2.2.0
+PyJWT==2.10.1
+pwdlib[argon2]==0.2.1
+psycopg2-binary==2.9.10

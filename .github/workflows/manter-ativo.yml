@@ -1,0 +1,16 @@
+# O plano gratuito do Hugging Face hiberna o Space após 48 horas sem acesso.
+# Este agendamento acessa o sistema uma vez por dia para mantê-lo acordado.
+# Usa a variável HF_SPACE_URL (ex.: https://usuario-nome.hf.space).
+name: Manter sistema ativo
+
+on:
+  schedule:
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    if: ${{ vars.HF_SPACE_URL != '' }}
+    steps:
+      - run: curl -fsS --retry 5 --retry-delay 30 --max-time 120 "${{ vars.HF_SPACE_URL }}/api/status"

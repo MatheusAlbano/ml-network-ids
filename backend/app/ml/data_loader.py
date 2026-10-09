@@ -36,6 +36,20 @@ def load_raw_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     return df_train, df_test
 
 
+def load_test_data() -> pd.DataFrame:
+    """
+    Carrega apenas o conjunto de teste. Usado pela API (estatísticas do
+    modelo), que não precisa do conjunto de treino, o que permite hospedar
+    o sistema enviando só o arquivo de teste ao servidor.
+    """
+    if not TEST_FILE.exists():
+        raise FileNotFoundError(
+            f"Arquivo de teste não encontrado em: {TEST_FILE}. "
+            "Baixe o dataset e coloque em dataset/raw/."
+        )
+    return pd.read_csv(TEST_FILE)
+
+
 def inspect_dataset(df: pd.DataFrame, name: str = "dataset") -> None:
     """
     Imprime um resumo exploratório inicial do dataset: shape, colunas,

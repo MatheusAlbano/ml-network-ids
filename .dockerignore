@@ -1,0 +1,9 @@
+.git
+.github
+venv
+**/__pycache__
+frontend/node_modules
+frontend/dist
+logs/*
+catboost_info
+artifacts/history.db
