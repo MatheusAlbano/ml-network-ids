@@ -1,0 +1,20 @@
+{
+  "model_name": "LightGBM",
+  "trained_at": "2026-08-07T00:15:08.993519+00:00",
+  "dataset": "UNSW-NB15",
+  "task_type": "binary_classification",
+  "target_labels": {
+    "0": "Normal",
+    "1": "Ataque"
+  },
+  "metrics": {
+    "test_accuracy": 0.9169946072001166,
+    "test_precision": 0.8858752305348409,
+    "test_recall": 0.9748301420630019,
+    "test_f1_score": 0.928226348512855,
+    "test_roc_auc": 0.9877722693354256,
+    "cv_f1_score_mean": 0.9605423635508232,
+    "cv_f1_score_std": 0.0003289303215333068
+  },
+  "model_file": "best_model.joblib"
+}

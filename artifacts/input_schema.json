@@ -1,0 +1,267 @@
+{
+  "features": [
+    {
+      "name": "dur",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 59.999989,
+      "example": 0.001582
+    },
+    {
+      "name": "proto",
+      "type": "categorical",
+      "allowed_values": [
+        "tcp",
+        "udp",
+        "unas",
+        "arp",
+        "ospf",
+        "other"
+      ]
+    },
+    {
+      "name": "service",
+      "type": "categorical",
+      "allowed_values": [
+        "-",
+        "dhcp",
+        "dns",
+        "ftp",
+        "ftp-data",
+        "http",
+        "irc",
+        "pop3",
+        "radius",
+        "smtp",
+        "snmp",
+        "ssh",
+        "ssl"
+      ]
+    },
+    {
+      "name": "state",
+      "type": "categorical",
+      "allowed_values": [
+        "CON",
+        "ECO",
+        "FIN",
+        "INT",
+        "PAR",
+        "REQ",
+        "RST",
+        "URN",
+        "no"
+      ]
+    },
+    {
+      "name": "rate",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 1000000.003,
+      "example": 3225.80652
+    },
+    {
+      "name": "sttl",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 255.0,
+      "example": 254.0
+    },
+    {
+      "name": "dttl",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 254.0,
+      "example": 29.0
+    },
+    {
+      "name": "sload",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 5988000256.0,
+      "example": 879674.75
+    },
+    {
+      "name": "dload",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 22422730.0,
+      "example": 1447.022705
+    },
+    {
+      "name": "sloss",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 4803.0,
+      "example": 0.0
+    },
+    {
+      "name": "dloss",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 5484.0,
+      "example": 0.0
+    },
+    {
+      "name": "sinpkt",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 84371.496,
+      "example": 0.279733
+    },
+    {
+      "name": "dinpkt",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 56716.824,
+      "example": 0.006
+    },
+    {
+      "name": "sjit",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 1460480.016,
+      "example": 0.0
+    },
+    {
+      "name": "djit",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 289388.2697,
+      "example": 0.0
+    },
+    {
+      "name": "swin",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 255.0,
+      "example": 0.0
+    },
+    {
+      "name": "stcpb",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 4294958913.0,
+      "example": 0.0
+    },
+    {
+      "name": "dtcpb",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 4294881924.0,
+      "example": 0.0
+    },
+    {
+      "name": "tcprtt",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 2.518893,
+      "example": 0.0
+    },
+    {
+      "name": "ackdat",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 1.520884,
+      "example": 0.0
+    },
+    {
+      "name": "smean",
+      "type": "numeric",
+      "min_observed": 28.0,
+      "max_observed": 1504.0,
+      "example": 73.0
+    },
+    {
+      "name": "dmean",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 1458.0,
+      "example": 44.0
+    },
+    {
+      "name": "trans_depth",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 172.0,
+      "example": 0.0
+    },
+    {
+      "name": "response_body_len",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 6558056.0,
+      "example": 0.0
+    },
+    {
+      "name": "ct_srv_src",
+      "type": "numeric",
+      "min_observed": 1.0,
+      "max_observed": 63.0,
+      "example": 5.0
+    },
+    {
+      "name": "ct_state_ttl",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 6.0,
+      "example": 1.0
+    },
+    {
+      "name": "ct_dst_ltm",
+      "type": "numeric",
+      "min_observed": 1.0,
+      "max_observed": 51.0,
+      "example": 2.0
+    },
+    {
+      "name": "ct_src_dport_ltm",
+      "type": "numeric",
+      "min_observed": 1.0,
+      "max_observed": 51.0,
+      "example": 1.0
+    },
+    {
+      "name": "ct_dst_sport_ltm",
+      "type": "numeric",
+      "min_observed": 1.0,
+      "max_observed": 46.0,
+      "example": 1.0
+    },
+    {
+      "name": "ct_dst_src_ltm",
+      "type": "numeric",
+      "min_observed": 1.0,
+      "max_observed": 65.0,
+      "example": 3.0
+    },
+    {
+      "name": "ct_ftp_cmd",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 4.0,
+      "example": 0.0
+    },
+    {
+      "name": "ct_flw_http_mthd",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 30.0,
+      "example": 0.0
+    },
+    {
+      "name": "ct_src_ltm",
+      "type": "numeric",
+      "min_observed": 1.0,
+      "max_observed": 60.0,
+      "example": 3.0
+    },
+    {
+      "name": "is_sm_ips_ports",
+      "type": "numeric",
+      "min_observed": 0.0,
+      "max_observed": 1.0,
+      "example": 0.0
+    }
+  ]
+}
