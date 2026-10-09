@@ -1,16 +1,17 @@
-# O plano gratuito do Hugging Face hiberna o Space após 48 horas sem acesso.
-# Este agendamento acessa o sistema uma vez por dia para mantê-lo acordado.
-# Usa a variável HF_SPACE_URL (ex.: https://usuario-nome.hf.space).
+# O plano gratuito do Render desliga o serviço após 15 minutos sem acesso,
+# e a primeira visita depois disso demora cerca de um minuto.
+# Este agendamento acessa o sistema a cada 10 minutos para mantê-lo ligado.
+# Usa a variável RENDER_URL (ex.: https://ml-network-ids.onrender.com).
 name: Manter sistema ativo
 
 on:
   schedule:
-    - cron: "0 12 * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    if: ${{ vars.HF_SPACE_URL != '' }}
+    if: ${{ vars.RENDER_URL != '' }}
     steps:
-      - run: curl -fsS --retry 5 --retry-delay 30 --max-time 120 "${{ vars.HF_SPACE_URL }}/api/status"
+      - run: curl -fsS --retry 5 --retry-delay 30 --max-time 120 "${{ vars.RENDER_URL }}/api/"

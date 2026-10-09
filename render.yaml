@@ -1,0 +1,19 @@
+# Blueprint do Render: cria o serviço web gratuito a partir do Dockerfile.
+# No painel do Render: New > Blueprint > escolher este repositório.
+services:
+  - type: web
+    name: ml-network-ids
+    runtime: docker
+    plan: free
+    branch: main
+    autoDeploy: true
+    healthCheckPath: /api/
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        sync: false

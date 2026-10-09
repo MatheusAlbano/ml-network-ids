@@ -1,4 +1,4 @@
-# Dependências usadas na imagem Docker de hospedagem.
+# Dependências usadas na imagem Docker de hospedagem (Render).
 # Reaproveita o requirements.txt principal e acrescenta o que a
 # autenticação e o banco externo opcional (PostgreSQL) precisam.
 -r ../requirements.txt

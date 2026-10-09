@@ -1,5 +1,5 @@
 """
-Ponto de entrada usado na hospedagem (Docker / Hugging Face Spaces).
+Ponto de entrada usado na hospedagem (Docker / Render).
 
 Junta backend e frontend num único servidor, para que o sistema inteiro
 fique acessível por um só link:
