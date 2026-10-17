@@ -18,6 +18,7 @@ from app.models.analysis import AnalysisRecord
 from app.api.routes.predict import get_model, get_model_name, classify_risk
 from app.schemas.batch import BatchPredictionResponse, BatchRowResult, BatchRowError
 from app.core.config import SCHEMA_PATH
+from app.ml.feature_engineering import group_rare_proto
 import json
 
 router = APIRouter()
@@ -92,6 +93,10 @@ async def predict_batch(
         raise HTTPException(status_code=422, detail=f"Não foi possível ler o CSV: {e}")
     _validate_csv_columns(df)
 
+    # Mesmo agrupamento aplicado no treino: protocolos fora dos mais
+    # frequentes (ex.: 'igp', 'ippc') viram 'other' em vez de serem rejeitados.
+    df = group_rare_proto(df)
+
     model = get_model()
     model_name = get_model_name()
 
@@ -139,6 +144,7 @@ async def predict_batch(
 
             records_to_save.append(
                 AnalysisRecord(
+                    user_id=current_user.id,
                     predicted_class=predicted_class,
                     probability_attack=probability_attack,
                     risk_level=risk_level.value,
