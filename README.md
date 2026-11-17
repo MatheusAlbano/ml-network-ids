@@ -161,6 +161,7 @@ O processo de desenvolvimento completo — incluindo decisões técnicas, bugs i
 
 ## Documentação adicional
 
+- [`docs/TCC_IDS_ML.pdf`](docs/TCC_IDS_ML.pdf): texto completo do TCC em PDF (link do QR code do banner do simpósio)
 - [`docs/00-planejamento.md`](docs/00-planejamento.md) — planejamento detalhado, decisões técnicas e histórico do desenvolvimento
 - `/docs` (Swagger UI, com a API rodando) — documentação interativa de todos os endpoints
 - [`deploy/README.md`](deploy/README.md): hospedagem gratuita no Render, com o sistema acessível por um link
